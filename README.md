@@ -5,6 +5,7 @@ Questo progetto è stato realizzato per pura curiosità, ha il solo scopo di tes
 Una volta avviato partirà la scanzione, se viene catturato un codice è possibile ritrasmetterlo.
 
 L'utilizzo della modalità JAMMER, è programmata per durare meno di un minuto.
+
 È importante rispettare le leggi locali e utilizzare questo tipo di tecnologia con responsabilità e consapevolezza dei possibili rischi e impatti.
 
 433Sniffer.ino V1.0 by Filippo Tamarindo
