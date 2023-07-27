@@ -8,4 +8,6 @@ L'utilizzo della modalità JAMMER, è programmata per durare meno di un minuto.
 
 È importante rispettare le leggi locali e utilizzare il dispositivo con responsabilità e consapevolezza dei possibili rischi e impatti.
 
-433Sniffer.ino V1.0 by Filippo Tamarindo
+433Sniffer.ino Beta 
+
+by Filippo Tamarindo
