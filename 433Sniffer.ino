@@ -25,17 +25,24 @@ Adafruit_SSD1306 display(OLED_RESET);
 // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 
-float vout = 0.0;             // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
-float vin = 0.0;              // Valore effettivo di tensione vin = vout / (R2 / (R1 + R2)
-float R2 = 10000.0;           // Valore di 10K  (collegata verso GND)
-float R1 = 100000.0;          // Valore di 100K (collegata verso VIN)
-int vbatt = 0;                // Valore letto dall'ingresso analogico
+float vout;                    // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
+float vin;                     // Valore effettivo di tensione vin = vout / (R2 / (R1 + R2)
+float R2 = 10000.0;            // Valore di 10K  (collegata verso GND)
+float R1 = 100000.0;           // Valore di 100K (collegata verso VIN)
+int vbatt;                     // Valore letto dall'ingresso analogico
 
-int ReceivedProtocol = 0;     // Variabile condivisa per il protocollo ricevuto
-int ReceivedBitlength = 0;    // Variabile condivisa lunghezza bit del codice ricevuto
-int ReceivedDelay = 0;        // Variabile condivisa durata dell'impulso ricevuto
-long JammerCode;              // Variabile codice pseudocasuale per jammer
-long ReceivedValue = 0;       // Variabile condivisa codice ricevuto
+int ReceivedProtocol;     // Variabile condivisa per il protocollo ricevuto
+int ReceivedBitlength;    // Variabile condivisa lunghezza bit del codice ricevuto
+int ReceivedDelay;        // Variabile condivisa durata dell'impulso ricevuto (µs microsecondi)
+long JammerCode;          // Variabile codice pseudocasuale per jammer
+long ReceivedValue;       // Variabile condivisa codice ricevuto
+
+//jammer settings
+int JammerProtocol = 1;            // Protocollo del codice jammer
+int JammerBitlength = 24;          // Lunghezza del codice jammer
+int JammerPulseLength = 350;       // Durata impulso del codice jammer (µs microsecondi)
+int JammerRepeatTransmit = 1000;    // Ripetizioni del codice jammer
+
 
 RCSwitch mySwitch = RCSwitch();
 
@@ -91,7 +98,7 @@ void TX() {
   digitalWrite(WekeUpRX, LOW);                             // Addormenta RX
   mySwitch.setProtocol(ReceivedProtocol);                  // Imposta il protocollo
   mySwitch.setPulseLength(ReceivedDelay);                  // Imposta la lunghezza dell'impulso (in microsecondi)
-  mySwitch.setRepeatTransmit(10);                          // Imposta il numero di ripetizioni del codice
+  //mySwitch.setRepeatTransmit(10);                        // Imposta il numero di ripetizioni del codice
   mySwitch.send(ReceivedValue, ReceivedBitlength);         // Trasmette il codice ricevuto con la stessa lunghezza di Bit
 
   battery();
@@ -126,7 +133,7 @@ void RX() {
     display.setCursor(40, 0);
     display.println(mySwitch.getReceivedValue());
     display.setCursor(0, 13);
-    display.println("Delay:    us");                          // µs microsecondi
+    display.println("Delay:    us");
     display.setCursor(40, 13);
     display.println(mySwitch.getReceivedDelay());
     display.setCursor(88, 13);
@@ -146,6 +153,9 @@ void RX() {
     TX();
   }
   if (digitalRead(SendCode) == HIGH && digitalRead(CapturedLed) == LOW) {
+
+    Serial.print("NO CODE CAPTURED!");
+    Serial.print(" \n ");
     display.clearDisplay();
     display.invertDisplay(true);
     display.setTextSize(2);
@@ -176,18 +186,29 @@ void jammer() {
   display.display();
 
   randomSeed(millis());
-  JammerCode = random(1, 1000000);
+  JammerCode = random(1, 9999999);
 
   Serial.print("Jamming:   ");
   Serial.print(JammerCode);
-  Serial.print("      Locked at: 24Bit - Protocol 1 - PulseLength 350 - RepeatTransmit 1000");
+  Serial.print("   LOCKED AT >> ");
+  Serial.print("Bit: ");
+  Serial.print(JammerBitlength);
+  Serial.print("   Delay(us): ");
+  Serial.print(JammerPulseLength);
+  Serial.print("   Protocol: ");
+  Serial.print(JammerProtocol);
+  Serial.print("   Repetitions: ");
+  Serial.print(JammerRepeatTransmit);
+  Serial.print(" \n ");
   Serial.print(" \n ");
 
-  mySwitch.setProtocol(1);           // Imposta il protocollo desiderato
-  mySwitch.setPulseLength(350);      // Imposta la lunghezza dell'impulso (in microsecondi)
-  mySwitch.setRepeatTransmit(1000);  // Imposta il numero di ripetizioni del segnale di trasmissione
-  mySwitch.send(JammerCode, 24);     // Trasmette il codice ricevuto con la stessa lunghezza
-  digitalWrite(JammerLed, LOW);      // Spegne indicatore modalità jammer
+
+  mySwitch.setPulseLength(JammerPulseLength);
+  mySwitch.setProtocol(JammerProtocol);
+  mySwitch.setRepeatTransmit(JammerRepeatTransmit);
+  mySwitch.send(JammerCode, JammerBitlength);           // Usa codice pseudocasuale alla lungh bit impostata
+  digitalWrite(JammerLed, LOW);                         // Spegne indicatore modalità jammer
+
 
   battery();
 }
