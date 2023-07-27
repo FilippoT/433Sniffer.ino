@@ -10,37 +10,37 @@
 // #define SCREEN_WIDTH 128 // lunghezza display in pixels
 // #define SCREEN_HEIGHT 32 // altezza display in pixels
 
-#define BatteryLimit 6.5     // Limite volt batteria scarica
-#define BatteryInput A0      // Pin analogico lettura volt batteria 
-#define RxPin 0              // Imposta 0 (D2) per RX
-#define TxPin 3              // Imposta PIN 3 per TX
-#define WekeUpRX 5           // Sveglia/Addormenta la ricevente
-#define JammerLed 10         // Indicatore modalità jammer
-#define CapturedLed 11       // Indicatore codice ricevuto
-#define RunLed 12            // Indicatore programma in esecuzione
-#define SendCode 7           // Pulsante invia codice
-#define JammerMode 8         // Pulsante modalità jammer
-#define OLED_RESET -1        // Reset pin # (-1 condiviso con reset pin arduino)
+#define BatteryLimit 6.5            // Limite volt batteria scarica
+#define BatteryInput A0             // Pin analogico lettura volt batteria 
+#define RxPin 0                     // Pin D2 (0) per RX
+#define TxPin 3                     // Pin D3 per TX
+#define WekeUpRX 5                  // Sveglia/Addormenta la ricevente
+#define JammerLed 10                // Indicatore modalità jammer
+#define CapturedLed 11              // Indicatore codice catturato
+#define RunLed 12                   // Indicatore programma in esecuzione
+#define SendCode 7                  // Pulsante invia codice
+#define JammerMode 8                // Pulsante modalità jammer
+#define OLED_RESET -1               // Reset pin # (-1 condiviso con reset pin arduino)
 Adafruit_SSD1306 display(OLED_RESET);
 // Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 
-float vout;                    // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
-float vin;                     // Valore effettivo di tensione vin = vout / (R2 / (R1 + R2)
-float R2 = 10000.0;            // Valore di 10K  (collegata verso GND)
-float R1 = 100000.0;           // Valore di 100K (collegata verso VIN)
-int vbatt;                     // Valore letto dall'ingresso analogico
+float vout;                         // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
+float vin;                          // Valore effettivo di tensione vin = vout / (R2 / (R1 + R2)
+float R2 = 10000.0;                 // Resistore 10K  (collegata verso GND)
+float R1 = 100000.0;                // Resistore 100K (collegata verso VIN)
+int vbatt;                          // Lettura ingresso analogico
 
-int ReceivedProtocol;     // Variabile condivisa per il protocollo ricevuto
-int ReceivedBitlength;    // Variabile condivisa lunghezza bit del codice ricevuto
-int ReceivedDelay;        // Variabile condivisa durata dell'impulso ricevuto (µs microsecondi)
-long JammerCode;          // Variabile codice pseudocasuale per jammer
-long ReceivedValue;       // Variabile condivisa codice ricevuto
+int ReceivedProtocol;               // Protocollo del codice catturato
+int ReceivedBitlength;              // Lunghezza in bit del codice catturato
+int ReceivedDelay;                  // Durata dell'impulso del codice catturato (µs microsecondi)
+long JammerCode;                    // Codice pseudocasuale per jammer
+long ReceivedValue;                 // Codice catturato
 
 //jammer settings
-int JammerProtocol = 1;            // Protocollo del codice jammer
-int JammerBitlength = 24;          // Lunghezza del codice jammer
-int JammerPulseLength = 350;       // Durata impulso del codice jammer (µs microsecondi)
+int JammerProtocol = 1;             // Protocollo del codice jammer
+int JammerBitlength = 24;           // Lunghezza del codice jammer
+int JammerPulseLength = 350;        // Durata impulso del codice jammer (µs microsecondi)
 int JammerRepeatTransmit = 1000;    // Ripetizioni del codice jammer
 
 
@@ -48,7 +48,7 @@ RCSwitch mySwitch = RCSwitch();
 
 void setup() {
   Serial.begin(9600);                         // Inizializza seriale
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Inizializza display
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Inizializza display e specifca indirizzo
 
   mySwitch.enableReceive(RxPin);
   mySwitch.enableTransmit(TxPin);
