@@ -1,74 +1,74 @@
-// 433Sniffer.ino v0.6Beta
+// 433Sniffer.ino v0.6.2 Beta
 // Non sono un programmatore ma posso imparare
 // By Filippo Tamarindo 
 
 #include <SPI.h>
-// #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <RCSwitch.h>
+// #include <Wire.h>
 
-// #define SCREEN_WIDTH 128 // lunghezza display in pixels
-// #define SCREEN_HEIGHT 32 // altezza display in pixels
-
-#define BatteryLimit 6.5            // Limite volt batteria scarica
-#define BatteryInput A0             // Pin analogico lettura volt batteria 
-#define RxPin 0                     // Pin D2 (0) per RX
-#define TxPin 3                     // Pin D3 per TX
+//------ PIN CONFIG -----------------------------------------------------------------------
+#define BatteryInput A0             // Pin analogico lettura volt partitore resistivo
+#define RxPin 0                     // Pin D2 (0) per la ricevente
+#define TxPin 3                     // Pin D3 per la trasmittente
 #define WekeUpRX 5                  // Sveglia/Addormenta la ricevente
 #define JammerLed 10                // Indicatore modalità jammer
 #define CapturedLed 11              // Indicatore codice catturato
 #define RunLed 12                   // Indicatore programma in esecuzione
 #define SendCode 7                  // Pulsante invia codice
 #define JammerMode 8                // Pulsante modalità jammer
-#define OLED_RESET -1               // Reset pin # (-1 condiviso con reset pin arduino)
-Adafruit_SSD1306 display(OLED_RESET);
-// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#define DisplayReset -1             // Reset pin (-1 condiviso con reset pin arduino)
 
+//------ SETTINGS -------------------------------------------------------------------------
+#define DisplayAddress 0x3C         // Indirizzo I2C display
+#define SarialBauds  9600           // Velocità porta seriale bits/s
+#define BatteryLimit 6.5            // Limite volt batteria scarica
+#define R1 100000.0                 // Resistore 100K (collegata verso VIN)
+#define R2 10000.0                  // Resistore 10K  (collegata verso GND)
+#define JammerProtocol 1            // Protocollo del codice jammer (1-12)
+#define JammerBitlength 24          // Lunghezza del codice jammer
+#define JammerPulseLength 350       // Durata impulso del codice jammer (µs microsecondi)
+#define JammerRepeatTransmit 1000   // Ripetizioni del codice jammer
+// #define DisplayWidth 128           // Lunghezza display in pixels
+// #define DisplayHeight 32           // Altezza display in pixels
+
+Adafruit_SSD1306 display(DisplayReset);
+// Adafruit_SSD1306 display(DisplayWidth, DisplayHeight, &Wire, DisplayReset);
 
 float vout;                         // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
 float vin;                          // Valore effettivo di tensione vin = vout / (R2 / (R1 + R2)
-float R2 = 10000.0;                 // Resistore 10K  (collegata verso GND)
-float R1 = 100000.0;                // Resistore 100K (collegata verso VIN)
 int vbatt;                          // Lettura ingresso analogico
-
 int ReceivedProtocol;               // Protocollo del codice catturato
 int ReceivedBitlength;              // Lunghezza in bit del codice catturato
 int ReceivedDelay;                  // Durata dell'impulso del codice catturato (µs microsecondi)
 long JammerCode;                    // Codice pseudocasuale per jammer
 long ReceivedValue;                 // Codice catturato
 
-//jammer settings
-int JammerProtocol = 1;             // Protocollo del codice jammer
-int JammerBitlength = 24;           // Lunghezza del codice jammer
-int JammerPulseLength = 350;        // Durata impulso del codice jammer (µs microsecondi)
-int JammerRepeatTransmit = 1000;    // Ripetizioni del codice jammer
-
-
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
-  Serial.begin(9600);                         // Inizializza seriale
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Inizializza display e specifca indirizzo
+  Serial.begin(SarialBauds);                               // Inizializza seriale alla velocità impostata
+  display.begin(SSD1306_SWITCHCAPVCC, DisplayAddress);     // Inizializza display con indirizzo impostato
 
-  mySwitch.enableReceive(RxPin);
-  mySwitch.enableTransmit(TxPin);
+  mySwitch.enableReceive(RxPin);                           // Asssegna alla libreria il pin di ricezione
+  mySwitch.enableTransmit(TxPin);                          // Asssegna alla libreria il pin di trasmissione
 
   pinMode(BatteryInput, INPUT);
-  pinMode(SendCode, INPUT_PULLUP);            // Imposta il pulsante come INPUT_PULLUP
-  pinMode(JammerMode, INPUT_PULLUP);          // Imposta il pulsante come INPUT_PULLUP
+  pinMode(SendCode, INPUT_PULLUP);                         // Imposta il pulsante come INPUT_PULLUP
+  pinMode(JammerMode, INPUT_PULLUP);                       // Imposta il pulsante come INPUT_PULLUP
   pinMode(CapturedLed, OUTPUT);
   pinMode(JammerLed, OUTPUT);
   pinMode(RunLed, OUTPUT);
 
-  digitalWrite(RunLed, HIGH);                  // Accende LED inizio esecuzione programma
-
-  battery();                                   // Esegue il controllo della batteria
+  digitalWrite(RunLed, HIGH);                              // Accende LED inizio esecuzione programma
+  
+  battery();                                               // Esegue il controllo della batteria
 }
 
 void loop() {
-  RX();
-  if (digitalRead(JammerMode) == HIGH) {       // Verifica se il pulsante "JammerMode" è stato premuto
-    jammer();
+  RX();                                                     // Avvia l'intercettazione
+  if (digitalRead(JammerMode) == HIGH) {                    // Verifica se il pulsante "JammerMode" è stato premuto
+    jammer();                                               // Avvia modalità di disturbo
   }
 }
 
@@ -98,10 +98,10 @@ void TX() {
   digitalWrite(WekeUpRX, LOW);                             // Addormenta RX
   mySwitch.setProtocol(ReceivedProtocol);                  // Imposta il protocollo
   mySwitch.setPulseLength(ReceivedDelay);                  // Imposta la lunghezza dell'impulso (in microsecondi)
-  //mySwitch.setRepeatTransmit(10);                        // Imposta il numero di ripetizioni del codice
+  //mySwitch.setRepeatTransmit(10);                          // Imposta il numero di ripetizioni del codice
   mySwitch.send(ReceivedValue, ReceivedBitlength);         // Trasmette il codice ricevuto con la stessa lunghezza di Bit
 
-  battery();
+  battery();                                               // Esegue il controllo della batteria
 }
 
 void RX() {
@@ -150,7 +150,7 @@ void RX() {
   }
 
   if (digitalRead(SendCode) == HIGH && digitalRead(CapturedLed) == HIGH) {  // Controlla se pulsante "SendCode" è stato premuto, quando catturato un codice
-    TX();
+    TX();                                                                   // Esegue l'invio del codice catturato
   }
   if (digitalRead(SendCode) == HIGH && digitalRead(CapturedLed) == LOW) {
 
@@ -206,8 +206,8 @@ void jammer() {
   mySwitch.setPulseLength(JammerPulseLength);
   mySwitch.setProtocol(JammerProtocol);
   mySwitch.setRepeatTransmit(JammerRepeatTransmit);
-  mySwitch.send(JammerCode, JammerBitlength);           // Usa codice pseudocasuale alla lungh bit impostata
-  digitalWrite(JammerLed, LOW);                         // Spegne indicatore modalità jammer
+  mySwitch.send(JammerCode, JammerBitlength);           // Usa codice pseudocasuale alla lungh di bit impostata
+  digitalWrite(JammerLed, LOW);                         // Spegne indicatore modalità disturbo
 
 
   battery();
