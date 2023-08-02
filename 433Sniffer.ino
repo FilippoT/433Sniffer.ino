@@ -1,10 +1,6 @@
-// 433Sniffer.ino v0.6.2 Beta
+// 433Sniffer.ino v0.6.3 Beta
 // Non sono un programmatore ma posso imparare
 // By Filippo Tamarindo 
-
-#include <SPI.h>
-#include <Adafruit_SSD1306.h>
-#include <RCSwitch.h>
 
 //------ PIN CONFIG -----------------------------------------------------------------------
 #define BatteryInput A0             // Pin analogico lettura volt partitore resistivo
@@ -29,6 +25,8 @@
 #define JammerPulseLength 350       // Durata impulso del codice jammer (µs microsecondi)
 #define JammerRepeatTransmit 1000   // Ripetizioni del codice jammer
 
+#include <Adafruit_SSD1306.h>  //https://github.com/adafruit/Adafruit_SSD1306
+#include <RCSwitch.h>          //https://github.com/sui77/rc-switch/
 
 Adafruit_SSD1306 display(DisplayReset);
 
@@ -198,13 +196,11 @@ void jammer() {
   Serial.print(" \n ");
   Serial.print(" \n ");
 
-
   mySwitch.setPulseLength(JammerPulseLength);
   mySwitch.setProtocol(JammerProtocol);
   mySwitch.setRepeatTransmit(JammerRepeatTransmit);
   mySwitch.send(JammerCode, JammerBitlength);           // Usa codice pseudocasuale alla lungh di bit impostata
   digitalWrite(JammerLed, LOW);                         // Spegne indicatore modalità disturbo
-
 
   battery();
 }
