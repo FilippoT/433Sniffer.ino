@@ -5,6 +5,7 @@
 #include <SPI.h>
 #include <Adafruit_SSD1306.h>
 #include <RCSwitch.h>
+// #include <Wire.h>
 
 //------ PIN CONFIG -----------------------------------------------------------------------
 #define BatteryInput A0             // Pin analogico lettura volt partitore resistivo
