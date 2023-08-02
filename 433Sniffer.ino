@@ -5,13 +5,12 @@
 #include <SPI.h>
 #include <Adafruit_SSD1306.h>
 #include <RCSwitch.h>
-// #include <Wire.h>
 
 //------ PIN CONFIG -----------------------------------------------------------------------
 #define BatteryInput A0             // Pin analogico lettura volt partitore resistivo
 #define RxPin 0                     // Pin D2 (0) per la ricevente
 #define TxPin 3                     // Pin D3 per la trasmittente
-#define WekeUpRX 5                  // Sveglia/Addormenta la ricevente
+#define WekeUpRx 5                  // Sveglia/Addormenta la ricevente
 #define JammerLed 10                // Indicatore modalità jammer
 #define CapturedLed 11              // Indicatore codice catturato
 #define RunLed 12                   // Indicatore programma in esecuzione
@@ -29,11 +28,9 @@
 #define JammerBitlength 24          // Lunghezza del codice jammer
 #define JammerPulseLength 350       // Durata impulso del codice jammer (µs microsecondi)
 #define JammerRepeatTransmit 1000   // Ripetizioni del codice jammer
-// #define DisplayWidth 128           // Lunghezza display in pixels
-// #define DisplayHeight 32           // Altezza display in pixels
+
 
 Adafruit_SSD1306 display(DisplayReset);
-// Adafruit_SSD1306 display(DisplayWidth, DisplayHeight, &Wire, DisplayReset);
 
 float vout;                         // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
 float vin;                          // Valore effettivo di tensione vin = vout / (R2 / (R1 + R2)
@@ -66,13 +63,13 @@ void setup() {
 }
 
 void loop() {
-  RX();                                                     // Avvia l'intercettazione
+  rx();                                                     // Avvia l'intercettazione
   if (digitalRead(JammerMode) == HIGH) {                    // Verifica se il pulsante "JammerMode" è stato premuto
     jammer();                                               // Avvia modalità di disturbo
   }
 }
 
-void TX() {
+void tx() {
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
@@ -95,17 +92,16 @@ void TX() {
   Serial.println(ReceivedProtocol);
   Serial.print(" \n ");
 
-  digitalWrite(WekeUpRX, LOW);                             // Addormenta RX
+  digitalWrite(WekeUpRx, LOW);                             // Addormenta rx
   mySwitch.setProtocol(ReceivedProtocol);                  // Imposta il protocollo
   mySwitch.setPulseLength(ReceivedDelay);                  // Imposta la lunghezza dell'impulso (in microsecondi)
-  //mySwitch.setRepeatTransmit(10);                          // Imposta il numero di ripetizioni del codice
   mySwitch.send(ReceivedValue, ReceivedBitlength);         // Trasmette il codice ricevuto con la stessa lunghezza di Bit
 
   battery();                                               // Esegue il controllo della batteria
 }
 
-void RX() {
-  digitalWrite(WekeUpRX, HIGH);                            // Sveglia RX
+void rx() {
+  digitalWrite(WekeUpRx, HIGH);                            // Sveglia rx
   if (mySwitch.available()) {
     digitalWrite(CapturedLed, HIGH);                       // Accende indicatore codice ricevuto
 
@@ -150,7 +146,7 @@ void RX() {
   }
 
   if (digitalRead(SendCode) == HIGH && digitalRead(CapturedLed) == HIGH) {  // Controlla se pulsante "SendCode" è stato premuto, quando catturato un codice
-    TX();                                                                   // Esegue l'invio del codice catturato
+    tx();                                                                   // Esegue l'invio del codice catturato
   }
   if (digitalRead(SendCode) == HIGH && digitalRead(CapturedLed) == LOW) {
 
@@ -175,7 +171,7 @@ void RX() {
 }
 
 void jammer() {
-  digitalWrite(WekeUpRX, LOW);            // Addormenta RX
+  digitalWrite(WekeUpRx, LOW);            // Addormenta rx
   digitalWrite(JammerLed, HIGH);          // Accende indicatore modalità jammer
 
   display.clearDisplay();
