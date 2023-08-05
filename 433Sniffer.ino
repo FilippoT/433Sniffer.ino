@@ -25,11 +25,11 @@
 #define JammerPulseLength 350       // Durata impulso del codice jammer (µs microsecondi)
 #define JammerRepeatTransmit 1000   // Ripetizioni del codice jammer
 
-#include <Adafruit_SSD1306.h>  //https://github.com/adafruit/Adafruit_SSD1306
-#include <RCSwitch.h>          //https://github.com/sui77/rc-switch/
+//------ LIBRARIES ------------------------------------------------------------------------
+#include <Adafruit_SSD1306.h>       // https://github.com/adafruit/Adafruit_SSD1306
+#include <RCSwitch.h>               // https://github.com/sui77/rc-switch/
 
-Adafruit_SSD1306 display(DisplayReset);
-
+//------ VARIABLES -------------------------------------------------------------------------
 float vout;                         // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
 float vin;                          // Valore effettivo di tensione vin = vout / (R2 / (R1 + R2)
 int vbatt;                          // Lettura ingresso analogico
@@ -39,6 +39,7 @@ int ReceivedDelay;                  // Durata dell'impulso del codice catturato 
 long JammerCode;                    // Codice pseudocasuale per jammer
 long ReceivedValue;                 // Codice catturato
 
+Adafruit_SSD1306 display(DisplayReset);
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
