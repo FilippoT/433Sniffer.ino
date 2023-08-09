@@ -27,7 +27,7 @@
 
 //------ LIBRARIES ------------------------------------------------------------------------
 #include <Adafruit_SSD1306.h>       // https://github.com/adafruit/Adafruit_SSD1306
-#include <RCSwitch.h>               // https://github.com/sui77/rc-switch/
+#include <RCSwitch.h>               // https://github.com/sui77/rc-switch
 
 //------ VARIABLES -------------------------------------------------------------------------
 float vout;                         // Mappatura lineare di vbatt   out = (vbatt * 5.0) / 1023;
