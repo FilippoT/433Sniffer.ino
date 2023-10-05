@@ -6,7 +6,7 @@ Una volta avviato partirà la scansione, se viene catturato un codice è possibi
 
 L'utilizzo della modalità JAMMER, è programmata per durare meno di un minuto.
 
-È importante rispettare le leggi locali e utilizzare il dispositivo con responsabilità e consapevolezza dei possibili rischi e impatti.
+Utilizzare il progetto con responsabilità e consapevolezza dei possibili rischi e impatti, rispettando le leggi vigenti.
 
 433Sniffer.ino Beta 
 
