@@ -1,5 +1,6 @@
 433Sniffer v0.7.3 Beta
-Descrizione
+
+
 433Sniffer è uno strumento sviluppato per intercettare, visualizzare e ritrasmettere segnali a 433 MHz. (E' comunque possibile utilizzare una Tx e RX a 315MHZ)
 Questo progetto è pensato per permettere l'analisi e la manipolazione di segnali RF (Radio Frequency) utilizzati in telecomandi e dispositivi simili. 
 L'utente può anche utilizzare una modalità jammer per disturbare le comunicazioni RF.
