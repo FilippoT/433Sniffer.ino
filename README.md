@@ -4,11 +4,10 @@
 
 **Descrizione:**
 
-`433Sniffer.ino` é stato progettato per intercettare e ritrasmettere segnali RF a 433 MHz.
-Il dispositivo permette di catturare i codici inviati dai radiocomandi a 433 MHz e ritrasmetterli su richiesta. (i moduli a 433Mhz possono essere sostituiti tranquillamente con quelli a 315Mhz), in modo da semplificare le applicazioni di domotica.
-Il codice sfrutta un display OLED per visualizzare i dettagli dei segnali intercettati inclusi il protocollo, la lunghezza in bit, e la durata dell'impulso.
+`433Sniffer.ino` é stato progettato per intercettare e ritrasmettere segnali RF a 433MHz (i moduli a 433Mhz possono essere sostituiti tranquillamente con quelli a 315Mhz), per semplificare le applicazioni di domotica.
+Utilizza un display OLED per visualizzare i dettagli dei segnali intercettati inclusi il protocollo, la lunghezza in bit, e la durata dell'impulso.
 È dotato di LED di stato che indicano le operazioni in corso, come la cattura dei segnali, la modalità jammer e lo stato di funzionamento del sistema.
-Inoltre, include una modalità jammer che genera segnali pseudocasuali per disturbare le comunicazioni RF nella stessa frequenza. 
+Inoltre, c'è una modalità jammer che genera segnali pseudocasuali per disturbare le comunicazioni RF nella stessa frequenza. 
 
 NB: Anche se la modalità Jammer ha una durata temporale limitata, (vedi codice) può essere interrotta solo con l'interruttore di alimentazione.
 
@@ -45,7 +44,7 @@ NB: Anche se la modalità Jammer ha una durata temporale limitata, (vedi codice)
    - **Batteria 9V**: Fornisce l'energia necessaria al sistema, gestita tramite un interruttore per accensione e spegnimento.
 
 7. **Connessioni e Comunicazione**
-   - **Connessione USB**: Permette la connessione al computer per la programmazione e il monitoraggio seriale del sistema,
+   - **Connessione USB**: Per la programmazione e il monitoraggio seriale del sistema,
    inoltre può fornire l'alimentazione al posto della batteria 9v.
 
 
