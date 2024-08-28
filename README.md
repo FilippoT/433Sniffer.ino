@@ -1,15 +1,22 @@
-433Sniffer v0.7 Beta
+433Sniffer v0.7 Beta Filippo Tamarindo
+
+![box](https://github.com/FilippoT/433Sniffer.ino/blob/master/photo_433Sniffer.ino.jpg)
 
 **Descrizione:**
 
-`433Snifferino` progettato per intercettare e ritrasmettere segnali RF a 433 MHz. Il dispositivo permette di catturare i codici inviati dai radiocomandi a 433 MHz e ritrasmetterli su richiesta. (i moduli a 433Mhz possono essere sostituiti tranquillamente con quelli a 315Mhz)Inoltre, include una modalità jammer che genera segnali pseudocasuali per disturbare le comunicazioni RF nella stessa frequenza.
-Il codice sfrutta un display OLED per visualizzare i dettagli dei segnali intercettati inclusi il protocollo, la lunghezza in bit, e la durata dell'impulso. È dotato di LED di stato che indicano le operazioni in corso, come la cattura dei segnali, la modalità jammer e lo stato di funzionamento del sistema.
+`433Sniffer.ino` é stato progettato per intercettare e ritrasmettere segnali RF a 433 MHz.
+Il dispositivo permette di catturare i codici inviati dai radiocomandi a 433 MHz e ritrasmetterli su richiesta. (i moduli a 433Mhz possono essere sostituiti tranquillamente con quelli a 315Mhz), in modo da semplificare le applicazioni di domotica.
+Il codice sfrutta un display OLED per visualizzare i dettagli dei segnali intercettati inclusi il protocollo, la lunghezza in bit, e la durata dell'impulso.
+È dotato di LED di stato che indicano le operazioni in corso, come la cattura dei segnali, la modalità jammer e lo stato di funzionamento del sistema.
+Inoltre, include una modalità jammer che genera segnali pseudocasuali per disturbare le comunicazioni RF nella stessa frequenza. 
+
+NB: Anche se la modalità Jammer ha una durata temporale limitata, (vedi codice) può essere interrotta solo con l'interruttore di alimentazione.
 
 ### Requisiti Hardware
 
 1. **Microcontrollore**
 
-- **Arduino Nano**:Effettua tutte le operazioni di ricezione e trasmissione dei segnali RF e i controlli dei vari LED, pulsanti, e display.
+- **Arduino Nano**:il progetto con poche modifiche piu essere utilizzato anche con microcontrollori simili.
 
 2. **Moduli RF a 433 MHz**
 
@@ -31,15 +38,19 @@ Il codice sfrutta un display OLED per visualizzare i dettagli dei segnali interc
 5. **Componenti Passivi**
    - **Resistenze**:
      - **470Ω**: Collegati ai LED per limitarne la corrente.
-     - **1kΩ**: Utilizzati come pull-down resistors per i pulsanti.
+     - **1kΩ**: Utilizzati come pull-down per i pulsanti.
      - **100kΩ e 10kΩ**: Componenti del partitore resistivo per il monitoraggio della tensione della batteria.
 
 6. **Alimentazione**
-   - **Batteria 9V (PP3)**: Fornisce l'energia necessaria al sistema, gestita tramite un interruttore per accensione e spegnimento.
+   - **Batteria 9V**: Fornisce l'energia necessaria al sistema, gestita tramite un interruttore per accensione e spegnimento.
 
 7. **Connessioni e Comunicazione**
-   - **Adattatore USB-C a Mini USB**: Permette la connessione al computer per la programmazione e il monitoraggio seriale del sistema.
+   - **Connessione USB**: Permette la connessione al computer per la programmazione e il monitoraggio seriale del sistema,
+   inoltre può fornire l'alimentazione al posto della batteria 9v.
+
+
+![Collegamenti](https://github.com/FilippoT/433Sniffer.ino/blob/master/wiring_diagram.png)
 
 
 
-Filippo Tamarindo
+
